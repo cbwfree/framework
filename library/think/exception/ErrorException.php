@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2016 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -38,10 +38,10 @@ class ErrorException extends Exception
     public function __construct($severity, $message, $file, $line, array $context = [])
     {
         $this->severity = $severity;
-        $this->message  = $message;
-        $this->file     = $file;
-        $this->line     = $line;
-        $this->code     = 0;
+        $this->message = $message;
+        $this->file = $file;
+        $this->line = $line;
+        $this->code = 0;
 
         empty($context) || $this->setData('Error Context', $context);
     }

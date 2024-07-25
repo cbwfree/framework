@@ -9,7 +9,6 @@
 
 namespace think\process;
 
-
 class Utils
 {
 
@@ -25,7 +24,7 @@ class Utils
             return escapeshellarg($argument);
         }
         $escapedArgument = '';
-        $quote           = false;
+        $quote = false;
         foreach (preg_split('/(")/i', $argument, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE) as $part) {
             if ('"' === $part) {
                 $escapedArgument .= '\\"';
@@ -61,7 +60,7 @@ class Utils
                 return $input;
             }
             if (is_scalar($input)) {
-                return (string)$input;
+                return (string) $input;
             }
             throw new \InvalidArgumentException(sprintf('%s only accepts strings or stream resources.', $caller));
         }

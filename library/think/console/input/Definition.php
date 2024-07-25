@@ -11,7 +11,6 @@
 
 namespace think\console\input;
 
-
 class Definition
 {
 
@@ -47,7 +46,7 @@ class Definition
     public function setDefinition(array $definition)
     {
         $arguments = [];
-        $options   = [];
+        $options = [];
         foreach ($definition as $item) {
             if ($item instanceof Option) {
                 $options[] = $item;
@@ -66,9 +65,9 @@ class Definition
      */
     public function setArguments($arguments = [])
     {
-        $this->arguments          = [];
-        $this->requiredCount      = 0;
-        $this->hasOptional        = false;
+        $this->arguments = [];
+        $this->requiredCount = 0;
+        $this->hasOptional = false;
         $this->hasAnArrayArgument = false;
         $this->addArguments($arguments);
     }
@@ -196,7 +195,7 @@ class Definition
      */
     public function setOptions($options = [])
     {
-        $this->options   = [];
+        $this->options = [];
         $this->shortcuts = [];
         $this->addOptions($options);
     }
@@ -347,7 +346,7 @@ class Definition
                     $value = sprintf(' %s%s%s', $option->isValueOptional() ? '[' : '', strtoupper($option->getName()), $option->isValueOptional() ? ']' : '');
                 }
 
-                $shortcut   = $option->getShortcut() ? sprintf('-%s|', $option->getShortcut()) : '';
+                $shortcut = $option->getShortcut() ? sprintf('-%s|', $option->getShortcut()) : '';
                 $elements[] = sprintf('[%s--%s%s]', $shortcut, $option->getName(), $value);
             }
         }

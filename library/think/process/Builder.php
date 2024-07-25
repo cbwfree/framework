@@ -15,15 +15,14 @@ use think\Process;
 
 class Builder
 {
-
     private $arguments;
     private $cwd;
-    private $env            = null;
+    private $env = null;
     private $input;
-    private $timeout        = 60;
-    private $options        = [];
-    private $inheritEnv     = true;
-    private $prefix         = [];
+    private $timeout = 60;
+    private $options = [];
+    private $inheritEnv = true;
+    private $prefix = [];
     private $outputDisabled = false;
 
     /**
@@ -155,7 +154,7 @@ class Builder
             return $this;
         }
 
-        $timeout = (float)$timeout;
+        $timeout = (float) $timeout;
 
         if ($timeout < 0) {
             throw new \InvalidArgumentException('The timeout value must be a valid positive integer or float number.');
@@ -214,7 +213,7 @@ class Builder
         $options = $this->options;
 
         $arguments = array_merge($this->prefix, $this->arguments);
-        $script    = implode(' ', array_map([__NAMESPACE__ . '\\Utils', 'escapeArgument'], $arguments));
+        $script = implode(' ', array_map([__NAMESPACE__ . '\\Utils', 'escapeArgument'], $arguments));
 
         if ($this->inheritEnv) {
             // include $_ENV for BC purposes

@@ -11,13 +11,12 @@
 
 namespace think\console\command;
 
-
+use think\console\Command;
 use think\console\Input;
 use think\console\Output;
 use think\console\input\Argument as InputArgument;
 use think\console\input\Option as InputOption;
 use think\console\input\Definition as InputDefinition;
-use think\console\helper\Descriptor as DescriptorHelper;
 
 class Lists extends Command
 {
@@ -27,7 +26,8 @@ class Lists extends Command
      */
     protected function configure()
     {
-        $this->setName('list')->setDefinition($this->createDefinition())->setDescription('Lists commands')->setHelp(<<<EOF
+        $this->setName('list')->setDefinition($this->createDefinition())->setDescription('Lists commands')->setHelp(
+            <<<EOF
 The <info>%command.name%</info> command lists all commands:
 
   <info>php %command.full_name%</info>
@@ -56,10 +56,8 @@ EOF
      */
     protected function execute(Input $input, Output $output)
     {
-
-        $helper = new DescriptorHelper();
-        $helper->describe($output, $this->getConsole(), [
-            'raw_text'  => $input->getOption('raw'),
+        $output->describe($this->getConsole(), [
+            'raw_text' => $input->getOption('raw'),
             'namespace' => $input->getArgument('namespace'),
         ]);
     }

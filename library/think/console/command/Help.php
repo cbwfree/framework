@@ -11,11 +11,11 @@
 
 namespace think\console\command;
 
+use think\console\Command;
 use think\console\Input;
 use think\console\input\Argument as InputArgument;
 use think\console\input\Option as InputOption;
 use think\console\Output;
-use think\console\helper\Descriptor as DescriptorHelper;
 
 class Help extends Command
 {
@@ -32,7 +32,8 @@ class Help extends Command
         $this->setName('help')->setDefinition([
             new InputArgument('command_name', InputArgument::OPTIONAL, 'The command name', 'help'),
             new InputOption('raw', null, InputOption::VALUE_NONE, 'To output raw command help'),
-        ])->setDescription('Displays help for a command')->setHelp(<<<EOF
+        ])->setDescription('Displays help for a command')->setHelp(
+            <<<EOF
 The <info>%command.name%</info> command displays help for a given command:
 
   <info>php %command.full_name% list</info>
@@ -60,9 +61,7 @@ EOF
             $this->command = $this->getConsole()->find($input->getArgument('command_name'));
         }
 
-
-        $helper = new DescriptorHelper();
-        $helper->describe($output, $this->command, [
+        $output->describe($this->command, [
             'raw_text' => $input->getOption('raw'),
         ]);
 

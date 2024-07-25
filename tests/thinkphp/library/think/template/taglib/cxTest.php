@@ -19,12 +19,12 @@ namespace tests\thinkphp\library\think\tempplate\taglib;
 use think\Template;
 use think\template\taglib\Cx;
 
-class templateTest extends \PHPUnit_Framework_TestCase
+class cxTest extends \PHPUnit_Framework_TestCase
 {
     public function testPhp()
     {
         $template = new template();
-        $cx       = new Cx($template);
+        $cx = new Cx($template);
 
         $content = <<<EOF
 {php}echo \$a;{/php}
@@ -39,7 +39,7 @@ EOF;
     public function testVolist()
     {
         $template = new template();
-        $cx       = new Cx($template);
+        $cx = new Cx($template);
 
         $content = <<<EOF
 {volist name="list" id="vo" key="key"}
@@ -47,7 +47,7 @@ EOF;
 {/volist}
 EOF;
         $data = <<<EOF
-<?php if(is_array(\$list)): \$key = 0; \$__LIST__ = \$list;if( count(\$__LIST__)==0 ) : echo "" ;else: foreach(\$__LIST__ as \$key=>\$vo): \$mod = (\$key % 2 );++\$key;?>
+<?php if(is_array(\$list) || \$list instanceof \\think\\Collection || \$list instanceof \\think\\Paginator): \$key = 0; \$__LIST__ = \$list;if( count(\$__LIST__)==0 ) : echo "" ;else: foreach(\$__LIST__ as \$key=>\$vo): \$mod = (\$key % 2 );++\$key;?>
 
 <?php endforeach; endif; else: echo "" ;endif; ?>
 EOF;
@@ -60,14 +60,14 @@ EOF;
 {/volist}
 EOF;
 
-        $template->fetch($content, ['list' => [1, 2, 3, 4, 5]]);
+        $template->display($content, ['list' => [1, 2, 3, 4, 5]]);
         $this->expectOutputString('234');
     }
 
     public function testForeach()
     {
         $template = new template();
-        $cx       = new Cx($template);
+        $cx = new Cx($template);
 
         $content = <<<EOF
 {foreach \$list as \$key=>\$val}
@@ -88,9 +88,9 @@ EOF;
 {/foreach}
 EOF;
         $data = <<<EOF
-<?php if(is_array(\$list)): foreach(\$list as \$key=>\$val): ?>
+<?php if(is_array(\$list) || \$list instanceof \\think\\Collection || \$list instanceof \\think\\Paginator): if( count(\$list)==0 ) : echo "empty" ;else: foreach(\$list as \$key=>\$val): ?>
 
-<?php endforeach; endif; ?><?php if(empty(\$list)): echo '"empty'; endif; ?>
+<?php endforeach; endif; else: echo "empty" ;endif; ?>
 EOF;
         $cx->parseTag($content);
         $this->assertEquals($content, $data);
@@ -100,14 +100,14 @@ EOF;
 {\$val}
 {/foreach}
 EOF;
-        $template->fetch($content);
+        $template->display($content);
         $this->expectOutputString('234');
     }
 
     public function testIf()
     {
         $template = new template();
-        $cx       = new Cx($template);
+        $cx = new Cx($template);
 
         $content = <<<EOF
 {if \$var.a==\$var.b}
@@ -134,7 +134,7 @@ EOF;
     public function testSwitch()
     {
         $template = new template();
-        $cx       = new Cx($template);
+        $cx = new Cx($template);
 
         $content = <<<EOF
 {switch \$var}
@@ -173,7 +173,7 @@ EOF;
     public function testCompare()
     {
         $template = new template();
-        $cx       = new Cx($template);
+        $cx = new Cx($template);
 
         $content = <<<EOF
 {eq name="\$var.a" value="\$var.b"}
@@ -310,7 +310,7 @@ EOF;
     public function testRange()
     {
         $template = new template();
-        $cx       = new Cx($template);
+        $cx = new Cx($template);
 
         $content = <<<EOF
 {in name="var" value="\$value"}
@@ -342,14 +342,14 @@ EOF;
 {between name=":floor(5.1)" value="1,5"}yes{/between}
 {notbetween name=":ceil(5.1)" value="1,5"}no{/notbetween}
 EOF;
-        $template->fetch($content);
+        $template->display($content);
         $this->expectOutputString('yesno');
     }
 
     public function testPresent()
     {
         $template = new template();
-        $cx       = new Cx($template);
+        $cx = new Cx($template);
 
         $content = <<<EOF
 {present name="var"}
@@ -381,7 +381,7 @@ EOF;
     public function testEmpty()
     {
         $template = new template();
-        $cx       = new Cx($template);
+        $cx = new Cx($template);
 
         $content = <<<EOF
 {empty name="var"}
@@ -389,7 +389,7 @@ default
 {/empty}
 EOF;
         $data = <<<EOF
-<?php if(empty(\$var)): ?>
+<?php if(empty(\$var) || ((\$var instanceof \\think\\Collection || \$var instanceof \\think\\Paginator ) && \$var->isEmpty())): ?>
 default
 <?php endif; ?>
 EOF;
@@ -402,7 +402,7 @@ default
 {/notempty}
 EOF;
         $data = <<<EOF
-<?php if(!empty(\$var)): ?>
+<?php if(!(empty(\$var) || ((\$var instanceof \\think\\Collection || \$var instanceof \\think\\Paginator ) && \$var->isEmpty()))): ?>
 default
 <?php endif; ?>
 EOF;
@@ -413,7 +413,7 @@ EOF;
     public function testDefined()
     {
         $template = new template();
-        $cx       = new Cx($template);
+        $cx = new Cx($template);
 
         $content = <<<EOF
 {defined name="URL"}
@@ -445,40 +445,13 @@ EOF;
     public function testImport()
     {
         $template = new template();
-        $cx       = new Cx($template);
-
-        $content = <<<EOF
-{import file="base?ver=1.0" value="\$name.a" /}
-EOF;
-        $data = <<<EOF
-<?php if(isset(\$name['a'])): ?><script type="text/javascript" src="/Public/base.js?ver=1.0"></script><?php endif; ?>
-EOF;
-        $cx->parseTag($content);
-        $this->assertEquals($content, $data);
-
-        $content = <<<EOF
-{import file="base" type="css" /}
-EOF;
-        $data = <<<EOF
-<link rel="stylesheet" type="text/css" href="/Public/base.css" />
-EOF;
-        $cx->parseTag($content);
-        $this->assertEquals($content, $data);
-
-        $content = <<<EOF
-{import file="base,common" type="php" /}
-EOF;
-        $data = <<<EOF
-<?php \\think\\Loader::import("base"); ?><?php \\think\\Loader::import("common"); ?>
-EOF;
-        $cx->parseTag($content);
-        $this->assertEquals($content, $data);
+        $cx = new Cx($template);
 
         $content = <<<EOF
 {load file="base.php" value="\$name.a" /}
 EOF;
         $data = <<<EOF
-<?php if(isset(\$name['a'])): ?><?php require_cache("base.php"); ?><?php endif; ?>
+<?php if(isset(\$name['a'])): ?><?php include "base.php"; ?><?php endif; ?>
 EOF;
         $cx->parseTag($content);
         $this->assertEquals($content, $data);
@@ -505,7 +478,7 @@ EOF;
     public function testAssign()
     {
         $template = new template();
-        $cx       = new Cx($template);
+        $cx = new Cx($template);
 
         $content = <<<EOF
 {assign name="total" value="0" /}
@@ -529,7 +502,7 @@ EOF;
     public function testDefine()
     {
         $template = new template();
-        $cx       = new Cx($template);
+        $cx = new Cx($template);
 
         $content = <<<EOF
 {define name="INFO_NAME" value="test" /}
@@ -559,8 +532,17 @@ EOF;
 {\$i}
 {/for}
 EOF;
-        $template->fetch($content);
+        $template->display($content);
         $this->expectOutputString('123456789');
+    }
+    public function testUrl()
+    {
+        $template = new template();
+        $content = <<<EOF
+{url link="Index/index"  /}
+EOF;
+        $template->display($content);
+        $this->expectOutputString(\think\Url::build('Index/index'));
     }
 
     public function testFunction()
@@ -587,7 +569,7 @@ EOF;
 {/foreach}
 {/function}
 EOF;
-        $template->fetch($content, $data);
+        $template->display($content, $data);
         $this->expectOutputString("language:php,[5.4][5.5]");
     }
 }

@@ -10,14 +10,14 @@
 // +----------------------------------------------------------------------
 namespace think\console\output;
 
-use think\console\output\formatter\Style;
 use think\console\output\formatter\Stack as StyleStack;
+use think\console\output\formatter\Style;
 
 class Formatter
 {
 
     private $decorated = false;
-    private $styles    = [];
+    private $styles = [];
     private $styleStack;
 
     /**
@@ -39,17 +39,19 @@ class Formatter
         $this->setStyle('info', new Style('green'));
         $this->setStyle('comment', new Style('yellow'));
         $this->setStyle('question', new Style('black', 'cyan'));
+        $this->setStyle('highlight', new Style('red'));
+        $this->setStyle('warning', new Style('black', 'yellow'));
 
         $this->styleStack = new StyleStack();
     }
 
     /**
      * 设置外观标识
-     * @param bool $decorated 是否美化文职
+     * @param bool $decorated 是否美化文字
      */
     public function setDecorated($decorated)
     {
-        $this->decorated = (bool)$decorated;
+        $this->decorated = (bool) $decorated;
     }
 
     /**
@@ -103,12 +105,12 @@ class Formatter
      */
     public function format($message)
     {
-        $offset   = 0;
-        $output   = '';
+        $offset = 0;
+        $output = '';
         $tagRegex = '[a-z][a-z0-9_=;-]*';
         preg_match_all("#<(($tagRegex) | /($tagRegex)?)>#isx", $message, $matches, PREG_OFFSET_CAPTURE);
         foreach ($matches[0] as $i => $match) {
-            $pos  = $match[1];
+            $pos = $match[1];
             $text = $match[0];
 
             if (0 != $pos && '\\' == $message[$pos - 1]) {

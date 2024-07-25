@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2016 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -12,8 +12,8 @@
 namespace think;
 
 // ThinkPHP 引导文件
-defined('THINK_AUTOLOAD') or define('THINK_AUTOLOAD', getenv('THINK_AUTOLOAD') !== '0');
+// 1. 加载基础文件
+require __DIR__ . '/base.php';
 
-if (THINK_AUTOLOAD) {
-    require_once __DIR__ . '/think.php';
-}
+// 2. 执行应用
+App::run()->send();
